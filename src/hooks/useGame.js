@@ -49,6 +49,8 @@ const useGame = () => {
     setSpeed((prev) => ({ ...prev, spd: SPEED_SETTINGS.SPEED }));
 
     setGameStatus(GAME_STATUS.IN_GAME);
+
+    console.log(speed);
   };
 
   const endGame = () => {
@@ -74,6 +76,8 @@ const useGame = () => {
   const pauseGame = () => {
     setDirection(direction);
     setSpeed({ spd: null, speedBorder: SPEED_SETTINGS.SPEED_BORDER });
+    setGameStatus(GAME_STATUS.PAUSE);
+    console.log(direction);
   };
 
   const changeFoodType = () => {
@@ -131,7 +135,6 @@ const useGame = () => {
         //condition if food was ate
         //we ganarate new food, new type of food and speedBorder the speed by the condiontion inside the function
         if (head[0] === food.pos[0] && head[1] === food.pos[1]) {
-          console.log(speed);
           spliceIntex = 0;
           changeFoodType();
           generateFood();

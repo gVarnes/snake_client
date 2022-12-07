@@ -27,5 +27,6 @@ export const FOOD_BORDERS = {
 export const GAME_STATUS = {
   NOT_STARTED: "not_started",
   IN_GAME: "in_game",
+  PAUSE: "pause",
   OVER: "over",
 };
