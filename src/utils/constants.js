@@ -6,4 +6,20 @@ export const MOVES = {
   39: [0, 1],
   37: [0, -1],
 };
-export const SPEED = 200;
+
+export const SPEED_SETTINGS = {
+  SPEED: 500,
+  SPEED_INCREASE: 50,
+  SPEED_BORDER: 50,
+  MIN_SPEED: 100,
+};
+export const FOOD_TYPES = {
+  FIRST: 1,
+  SECOND: 5,
+  THIRD: 10,
+};
+
+export const FOOD_BORDERS = {
+  SECOND: 10,
+  THIRD: 50,
+};

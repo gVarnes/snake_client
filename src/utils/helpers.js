@@ -10,3 +10,10 @@ export const checkPostion = (position) => {
       return position;
   }
 };
+
+export const collision = (piece, snk) => {
+  for (const part of snk) {
+    if (piece[0] === part[0] && piece[1] === part[1]) return true;
+  }
+  return false;
+};

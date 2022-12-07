@@ -1,37 +1,56 @@
 import { useState, useEffect } from "react";
 
-import { BOARD_LENGTH, MOVES, SPEED } from "./../utils/constants";
-import { checkPostion } from "../utils/helpers";
+import {
+  BOARD_LENGTH,
+  FOOD_BORDERS,
+  FOOD_TYPES,
+  MOVES,
+  SPEED_SETTINGS,
+} from "./../utils/constants";
+import { checkPostion, collision } from "../utils/helpers";
 
 import { useSelector } from "react-redux";
 
 const useGame = () => {
   const [snake, setSnake] = useState([[3, 2]]);
-  const [speed, setSpeed] = useState(null);
   const [gameOver, setGameOver] = useState(true);
-  const [food, setFood] = useState([1, 1]);
   const [direction, setDirection] = useState(null);
   const [head, setHead] = useState(snake[snake.length - 1]);
   const [endScreen, setEndScreen] = useState(false);
+  const [score, setScore] = useState(1);
+  const [speed, setSpeed] = useState({
+    spd: null,
+    speedBorder: SPEED_SETTINGS.SPEED_BORDER,
+  });
+  const [food, setFood] = useState({
+    pos: [1, 1],
+    type: FOOD_TYPES.FIRST,
+  });
 
   const { name } = useSelector((state) => state.player);
 
   useEffect(() => {
     setHead(snake[snake.length - 1]);
     const interval = gameLoop();
-
     return () => clearInterval(interval);
   }, [snake, gameOver]);
 
-  const speedIncrease = () => {
-    if (snake.length % 5 === 0) console.log("2");
+  const calcNewSpeed = () => {
+    if (score >= speed.speedBorder && speed.spd > SPEED_SETTINGS.MIN_SPEED) {
+      setSpeed((prev) => ({
+        spd: prev.spd - SPEED_SETTINGS.SPEED_INCREASE,
+        speedBorder: prev.speedBorder + 5,
+      }));
+    }
   };
 
   const startGame = () => {
     direction === null ? setDirection([0, -1]) : setDirection(direction);
-    setSpeed(SPEED);
+    setSpeed((prev) => ({ ...prev, spd: SPEED_SETTINGS.SPEED }));
     setGameOver(false);
+    setEndScreen(false);
   };
+
   const endGame = () => {
     //fetch...
     fetch("http://localhost:3001/player", {
@@ -47,15 +66,36 @@ const useGame = () => {
       .then((data) => data.json)
       .then((res) => console.log(res));
 
-    setSpeed(null);
+    setSpeed({ spd: null, speedBorder: SPEED_SETTINGS.SPEED_BORDER });
     setGameOver(true);
     setEndScreen(true);
   };
 
   const pauseGame = () => {
     setDirection(direction);
-    setSpeed(null);
+    setSpeed({ spd: null, speedBorder: SPEED_SETTINGS.SPEED_BORDER });
     setGameOver(true);
+  };
+
+  const changeFoodType = () => {
+    if ((score + 1) % FOOD_BORDERS.THIRD === 0) {
+      //condition for the third type of food
+      const type = FOOD_TYPES.THIRD;
+      setFood((prev) => ({ ...prev, type }));
+      setScore((prev) => prev + type);
+      return;
+    } else if ((score + 1) % FOOD_BORDERS.SECOND === 0) {
+      //condition for the second type of food
+      const type = FOOD_TYPES.SECOND;
+      setFood((prev) => ({ ...prev, type }));
+      setScore((prev) => prev + type);
+      return;
+    }
+    //default condition for food
+    const type = FOOD_TYPES.FIRST;
+    setFood((prev) => ({ ...prev, type }));
+    setScore((prev) => prev + type);
+    return;
   };
 
   const generateFood = () => {
@@ -69,18 +109,11 @@ const useGame = () => {
       snake.some((elem) => elem[0] === newFood[0] && elem[1] === newFood[1])
     );
 
-    setFood(newFood);
+    setFood((prev) => ({ ...prev, pos: newFood }));
   };
 
   const moveSnake = ({ keyCode }) => {
     return keyCode >= 37 && keyCode <= 40 && setDirection(MOVES[keyCode]);
-  };
-
-  const collision = (piece, snk) => {
-    for (const part of snk) {
-      if (piece[0] === part[0] && piece[1] === part[1]) return true;
-    }
-    return false;
   };
 
   const gameLoop = () => {
@@ -96,26 +129,32 @@ const useGame = () => {
         newSnake.push(head);
 
         let spliceIntex = 1;
-        if (head[0] === food[0] && head[1] === food[1]) {
+        //condition if food was ate
+        //we ganarate new food, new type of food and speedBorder the speed by the condiontion inside the function
+        if (head[0] === food.pos[0] && head[1] === food.pos[1]) {
+          console.log(speed);
           spliceIntex = 0;
+          changeFoodType();
           generateFood();
+          calcNewSpeed();
         }
         if (collision(head, snake)) endGame();
-        speedIncrease();
+
         setSnake(newSnake.slice(spliceIntex));
       }
-    }, speed);
+    }, speed.spd);
     return timerId;
   };
 
   return {
     snake,
-    speed,
+    [speed]: speed.spd,
     gameOver,
     food,
     direction,
     head,
     endScreen,
+    score,
     moveSnake,
     startGame,
     pauseGame,
