@@ -1,0 +1,11 @@
+.players{
+	display: flex;
+	flex: 0 1 200px;
+	flex-direction: column;
+	gap: 5px;
+
+	&__row{
+		margin: 0;
+		padding: 0;
+	}
+}

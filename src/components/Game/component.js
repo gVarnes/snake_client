@@ -1,20 +1,18 @@
-import React, { useEffect } from "react";
-import Button from "./Button";
-import Square from "./Square";
-import { BOARD } from "../utils/constants";
+import React from "react";
+import Button from "../Button";
+import Square from "../Square";
+import { BOARD, GAME_STATUS } from "../../utils/constants";
 
-import useGame from "../hooks/useGame";
+import useGame from "../../hooks/useGame";
 
 import { useSelector } from "react-redux";
 
+import "./index.scss";
+
 const Game = () => {
-  const { snake, endScreen, moveSnake, startGame, pauseGame, food, score } =
+  const { snake, moveSnake, startGame, pauseGame, food, score, gameStatus } =
     useGame();
   const { name } = useSelector((state) => state.player);
-
-  useEffect(() => {
-    console.log(score);
-  }, [score]);
 
   return (
     <div className="game" tabIndex="0" onKeyDown={(e) => moveSnake(e)}>
@@ -22,12 +20,12 @@ const Game = () => {
         {name} Score {score}
       </h1>
       {/* this is a checking if variable true and game is over it shows game over screen else we are playing*/}
-      {endScreen ? (
-        <div className="endscreen">Game Over</div>
+      {gameStatus === GAME_STATUS.OVER ? (
+        <div className="game__over">Game Over</div>
       ) : (
-        <div className="box">
+        <div className="game__box">
           {BOARD.map((row, indexRow) => (
-            <div className="flex" key={indexRow}>
+            <div className="game__board" key={indexRow}>
               {row.map((col, indexCol) => {
                 let type =
                   snake.some(
@@ -38,7 +36,6 @@ const Game = () => {
                     food.pos[0] === indexRow &&
                     food.pos[1] === indexCol &&
                     "food";
-                // console.log(food[0]);
 
                 return <Square key={indexCol} type={type} />;
               })}
@@ -46,9 +43,11 @@ const Game = () => {
           ))}
         </div>
       )}
-      <div className="buttons">
+      <div className="game__buttons">
         <Button onClick={startGame} children="Start" />
-        <Button onClick={pauseGame} children="Pause" />
+        {gameStatus === GAME_STATUS.IN_GAME && (
+          <Button onClick={pauseGame} children="Pause" />
+        )}
       </div>
     </div>
   );

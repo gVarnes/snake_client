@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import "./index.scss";
 
 const LeadersBoard = () => {
   const [players, setPlayers] = useState([]);

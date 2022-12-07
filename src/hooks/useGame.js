@@ -4,6 +4,7 @@ import {
   BOARD_LENGTH,
   FOOD_BORDERS,
   FOOD_TYPES,
+  GAME_STATUS,
   MOVES,
   SPEED_SETTINGS,
 } from "./../utils/constants";
@@ -13,10 +14,8 @@ import { useSelector } from "react-redux";
 
 const useGame = () => {
   const [snake, setSnake] = useState([[3, 2]]);
-  const [gameOver, setGameOver] = useState(true);
   const [direction, setDirection] = useState(null);
   const [head, setHead] = useState(snake[snake.length - 1]);
-  const [endScreen, setEndScreen] = useState(false);
   const [score, setScore] = useState(1);
   const [speed, setSpeed] = useState({
     spd: null,
@@ -26,6 +25,7 @@ const useGame = () => {
     pos: [1, 1],
     type: FOOD_TYPES.FIRST,
   });
+  const [gameStatus, setGameStatus] = useState(GAME_STATUS.NOT_STARTED);
 
   const { name } = useSelector((state) => state.player);
 
@@ -33,7 +33,7 @@ const useGame = () => {
     setHead(snake[snake.length - 1]);
     const interval = gameLoop();
     return () => clearInterval(interval);
-  }, [snake, gameOver]);
+  }, [snake, gameStatus]);
 
   const calcNewSpeed = () => {
     if (score >= speed.speedBorder && speed.spd > SPEED_SETTINGS.MIN_SPEED) {
@@ -47,8 +47,8 @@ const useGame = () => {
   const startGame = () => {
     direction === null ? setDirection([0, -1]) : setDirection(direction);
     setSpeed((prev) => ({ ...prev, spd: SPEED_SETTINGS.SPEED }));
-    setGameOver(false);
-    setEndScreen(false);
+
+    setGameStatus(GAME_STATUS.IN_GAME);
   };
 
   const endGame = () => {
@@ -67,14 +67,13 @@ const useGame = () => {
       .then((res) => console.log(res));
 
     setSpeed({ spd: null, speedBorder: SPEED_SETTINGS.SPEED_BORDER });
-    setGameOver(true);
-    setEndScreen(true);
+
+    setGameStatus(GAME_STATUS.OVER);
   };
 
   const pauseGame = () => {
     setDirection(direction);
     setSpeed({ spd: null, speedBorder: SPEED_SETTINGS.SPEED_BORDER });
-    setGameOver(true);
   };
 
   const changeFoodType = () => {
@@ -118,7 +117,7 @@ const useGame = () => {
 
   const gameLoop = () => {
     const timerId = setTimeout(() => {
-      if (!gameOver) {
+      if (gameStatus === GAME_STATUS.IN_GAME) {
         const newSnake = [...snake];
 
         const head = [
@@ -149,12 +148,11 @@ const useGame = () => {
   return {
     snake,
     [speed]: speed.spd,
-    gameOver,
     food,
     direction,
     head,
-    endScreen,
     score,
+    gameStatus,
     moveSnake,
     startGame,
     pauseGame,

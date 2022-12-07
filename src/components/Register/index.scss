@@ -1,0 +1,28 @@
+.register{
+	height: 100vh;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	align-self: flex-start;
+	gap: 1rem;
+}
+
+.register__input{
+	font-size: 14px;
+	border-radius: 6px;
+	line-height: 1.5;
+	padding: 5px 10px;
+	transition: box-shadow 100ms ease-in, border 100ms ease-in, background-color 100ms ease-in;
+	border: 2px solid #dee1e2;
+	color: rgb(14, 14, 16);
+	background-color: #dee1e2;
+	display: block;
+	height: 36px;
+	&:hover {
+		 border-color: rgba(15, 1, 79);
+	}
+	&:focus{
+		 background-color: #fff;
+	}
+}
