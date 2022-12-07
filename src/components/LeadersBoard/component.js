@@ -1,13 +1,12 @@
 import React, { useEffect, useState } from "react";
+import { gettingPlayers } from "../../api";
 import "./index.scss";
 
 const LeadersBoard = () => {
   const [players, setPlayers] = useState([]);
 
   useEffect(() => {
-    fetch("http://localhost:3001/player")
-      .then((data) => data.json())
-      .then((res) => setPlayers(res));
+    gettingPlayers().then((data) => setPlayers(data));
   }, []);
 
   return (

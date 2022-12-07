@@ -11,6 +11,7 @@ import {
 import { checkPostion, collision } from "../utils/helpers";
 
 import { useSelector } from "react-redux";
+import { createPlayer } from "../api";
 
 const useGame = () => {
   const [snake, setSnake] = useState([[3, 2]]);
@@ -47,29 +48,18 @@ const useGame = () => {
   const startGame = () => {
     direction === null ? setDirection([0, -1]) : setDirection(direction);
     setSpeed((prev) => ({ ...prev, spd: SPEED_SETTINGS.SPEED }));
-
     setGameStatus(GAME_STATUS.IN_GAME);
-
-    console.log(speed);
   };
 
   const endGame = () => {
-    //fetch...
-    fetch("http://localhost:3001/player", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        name,
-        score: snake.length,
-      }),
-    })
-      .then((data) => data.json)
-      .then((res) => console.log(res));
+    const body = JSON.stringify({
+      name,
+      score: snake.length,
+    });
+    //fetch
+    createPlayer(body);
 
     setSpeed({ spd: null, speedBorder: SPEED_SETTINGS.SPEED_BORDER });
-
     setGameStatus(GAME_STATUS.OVER);
   };
 
@@ -77,7 +67,6 @@ const useGame = () => {
     setDirection(direction);
     setSpeed({ spd: null, speedBorder: SPEED_SETTINGS.SPEED_BORDER });
     setGameStatus(GAME_STATUS.PAUSE);
-    console.log(direction);
   };
 
   const changeFoodType = () => {
