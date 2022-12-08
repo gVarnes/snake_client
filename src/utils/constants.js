@@ -9,7 +9,7 @@ export const MOVES = {
 
 export const SPEED_SETTINGS = {
   SPEED: 500,
-  SPEED_INCREASE: 50,
+  SPEED_INCREASE: 100,
   SPEED_BORDER: 50,
   MIN_SPEED: 100,
 };

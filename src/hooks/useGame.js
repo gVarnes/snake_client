@@ -54,7 +54,7 @@ const useGame = () => {
   const endGame = () => {
     const body = JSON.stringify({
       name,
-      score: snake.length,
+      score,
     });
     //fetch
     createPlayer(body);

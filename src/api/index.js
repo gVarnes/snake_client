@@ -1,4 +1,5 @@
-const HOST = "http://localhost:3001";
+const HOST = "https://snake-db.onrender.com";
+const LOCAL_HPST = "http://localhost:3001";
 
 const request = async (url, method = "GET", body = null) => {
   const data = await fetch(url, {
